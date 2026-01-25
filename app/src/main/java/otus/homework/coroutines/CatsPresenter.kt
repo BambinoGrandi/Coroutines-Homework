@@ -6,6 +6,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.net.SocketTimeoutException
 
 class CatsPresenter(
@@ -32,6 +35,17 @@ class CatsPresenter(
                 errorHandler(it)
             }.onSuccess {
                 _catsView?.populate(it)
+            }
+        }
+    }
+
+    fun onInitComplete() {
+        job = presenterScope.launch {
+            try {
+                val facts = catsService.getCatFact()
+                _catsView?.populate(CatFact(facts))
+            } catch (e: Exception) {
+                errorHandler(e)
             }
         }
     }
