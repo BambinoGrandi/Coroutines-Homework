@@ -1,6 +1,7 @@
 package otus.homework.coroutines
 
 import android.content.res.Resources
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,8 +32,9 @@ class CatsPresenter(
                     fact = facts,
                     imageUrl = imageUrl,
                 )
-            }.onFailure {
-                errorHandler(it)
+            }.onFailure { error ->
+                if (error is CancellationException) throw error
+                errorHandler(error)
             }.onSuccess {
                 _catsView?.populate(it)
             }

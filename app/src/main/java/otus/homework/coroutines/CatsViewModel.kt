@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,6 +35,7 @@ class CatsViewModel(
                     imageUrl = imageUrl,
                 )
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 _catsFact.update {
                     Result.Error(errorHandler(error))
                 }
